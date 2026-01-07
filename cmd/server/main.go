@@ -22,7 +22,7 @@ func main() {
 
 	// Initialize API server
 	server := api.NewServer(k8sClient)
-	
+
 	addr := ":" + *port
 	log.Printf("Starting KubeFileX server on %s", addr)
 	if err := http.ListenAndServe(addr, server); err != nil {

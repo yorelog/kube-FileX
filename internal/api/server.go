@@ -46,18 +46,18 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func (s *Server) setupRoutes() {
 	// Pod operations
 	s.mux.HandleFunc("/api/pods", s.handleListPods)
-	
+
 	// File operations
 	s.mux.HandleFunc("/api/files/list", s.handleListFiles)
 	s.mux.HandleFunc("/api/files/read", s.handleReadFile)
 	s.mux.HandleFunc("/api/files/write", s.handleWriteFile)
 	s.mux.HandleFunc("/api/files/delete", s.handleDeleteFile)
 	s.mux.HandleFunc("/api/files/copy", s.handleCopyFile)
-	
+
 	// Search operations
 	s.mux.HandleFunc("/api/search/name", s.handleSearchByName)
 	s.mux.HandleFunc("/api/search/content", s.handleSearchByContent)
-	
+
 	// Serve frontend static files
 	s.mux.HandleFunc("/", s.handleStatic)
 }
@@ -207,14 +207,14 @@ func (s *Server) handleCopyFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var req struct {
-		SrcNamespace  string `json:"srcNamespace"`
-		SrcPod        string `json:"srcPod"`
-		SrcContainer  string `json:"srcContainer"`
-		SrcPath       string `json:"srcPath"`
-		DstNamespace  string `json:"dstNamespace"`
-		DstPod        string `json:"dstPod"`
-		DstContainer  string `json:"dstContainer"`
-		DstPath       string `json:"dstPath"`
+		SrcNamespace string `json:"srcNamespace"`
+		SrcPod       string `json:"srcPod"`
+		SrcContainer string `json:"srcContainer"`
+		SrcPath      string `json:"srcPath"`
+		DstNamespace string `json:"dstNamespace"`
+		DstPod       string `json:"dstPod"`
+		DstContainer string `json:"dstContainer"`
+		DstPath      string `json:"dstPath"`
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {

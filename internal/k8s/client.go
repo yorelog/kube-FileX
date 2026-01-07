@@ -157,7 +157,7 @@ func (c *Client) ListPods(ctx context.Context, namespace string) ([]PodInfo, err
 func (c *Client) ListFiles(ctx context.Context, namespace, podName, containerName, path string) ([]FileInfo, error) {
 	// Use ls -la command to list files with details
 	cmd := []string{"ls", "-la", "--time-style=+%Y-%m-%d_%H:%M:%S", path}
-	
+
 	stdout, _, err := c.execCommand(ctx, namespace, podName, containerName, cmd)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list files: %v", err)
@@ -169,7 +169,7 @@ func (c *Client) ListFiles(ctx context.Context, namespace, podName, containerNam
 // ReadFile reads a file from a pod
 func (c *Client) ReadFile(ctx context.Context, namespace, podName, containerName, filePath string) ([]byte, error) {
 	cmd := []string{"cat", filePath}
-	
+
 	stdout, _, err := c.execCommand(ctx, namespace, podName, containerName, cmd)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read file: %v", err)
@@ -192,7 +192,7 @@ func (c *Client) WriteFile(ctx context.Context, namespace, podName, containerNam
 
 	// Write file using tee command
 	cmd := []string{"tee", filePath}
-	
+
 	_, _, err := c.execCommandWithStdin(ctx, namespace, podName, containerName, cmd, content)
 	if err != nil {
 		return fmt.Errorf("failed to write file: %v", err)
@@ -204,7 +204,7 @@ func (c *Client) WriteFile(ctx context.Context, namespace, podName, containerNam
 // SearchFilesByName searches for files by name pattern in a pod
 func (c *Client) SearchFilesByName(ctx context.Context, namespace, podName, containerName, searchPath, pattern string) ([]string, error) {
 	cmd := []string{"find", searchPath, "-name", pattern, "-type", "f"}
-	
+
 	stdout, _, err := c.execCommand(ctx, namespace, podName, containerName, cmd)
 	if err != nil {
 		return nil, fmt.Errorf("failed to search files: %v", err)
@@ -225,7 +225,7 @@ func (c *Client) SearchFilesByName(ctx context.Context, namespace, podName, cont
 // SearchFilesByContent searches for files containing specific content
 func (c *Client) SearchFilesByContent(ctx context.Context, namespace, podName, containerName, searchPath, content string) ([]string, error) {
 	cmd := []string{"grep", "-r", "-l", content, searchPath}
-	
+
 	stdout, _, err := c.execCommand(ctx, namespace, podName, containerName, cmd)
 	if err != nil {
 		// grep returns non-zero exit code if no matches found, which is not an error for us
@@ -249,7 +249,7 @@ func (c *Client) SearchFilesByContent(ctx context.Context, namespace, podName, c
 // DeleteFile deletes a file from a pod
 func (c *Client) DeleteFile(ctx context.Context, namespace, podName, containerName, filePath string) error {
 	cmd := []string{"rm", "-f", filePath}
-	
+
 	_, _, err := c.execCommand(ctx, namespace, podName, containerName, cmd)
 	if err != nil {
 		return fmt.Errorf("failed to delete file: %v", err)
@@ -261,7 +261,7 @@ func (c *Client) DeleteFile(ctx context.Context, namespace, podName, containerNa
 // CopyFile copies a file within a pod or to another location
 func (c *Client) CopyFile(ctx context.Context, namespace, podName, containerName, srcPath, dstPath string) error {
 	cmd := []string{"cp", "-r", srcPath, dstPath}
-	
+
 	_, _, err := c.execCommand(ctx, namespace, podName, containerName, cmd)
 	if err != nil {
 		return fmt.Errorf("failed to copy file: %v", err)
