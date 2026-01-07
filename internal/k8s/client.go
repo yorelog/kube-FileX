@@ -345,8 +345,10 @@ func parseFileList(output []byte, basePath string) []FileInfo {
 		// Try to parse size
 		if !fileInfo.IsDir && len(fields) > 4 {
 			var size int64
-			fmt.Sscanf(fields[4], "%d", &size)
-			fileInfo.Size = size
+			if _, err := fmt.Sscanf(fields[4], "%d", &size); err == nil {
+				fileInfo.Size = size
+			}
+			// Ignore parsing errors - size will remain 0
 		}
 
 		// Parse modification time

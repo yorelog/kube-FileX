@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import PodSelector from './components/PodSelector';
 import FileExplorer from './components/FileExplorer';
 import SearchBar from './components/SearchBar';
+import { ToastProvider } from './components/ToastContext';
 import type { PodInfo } from './types';
 import { api } from './api';
 
@@ -37,7 +38,8 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <ToastProvider>
+      <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-blue-600 text-white shadow-lg">
         <div className="container mx-auto px-4 py-4">
@@ -129,6 +131,7 @@ function App() {
         </div>
       </footer>
     </div>
+    </ToastProvider>
   );
 }
 

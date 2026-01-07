@@ -30,6 +30,7 @@ func NewServer(k8sClient *k8s.Client) *Server {
 // ServeHTTP implements http.Handler interface
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Enable CORS for development
+	// TODO: In production, restrict to specific origins instead of "*"
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")

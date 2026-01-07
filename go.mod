@@ -1,6 +1,6 @@
 module github.com/yorelog/kube-FileX
 
-go 1.24.11
+go 1.21
 
 require (
 	k8s.io/api v0.29.0

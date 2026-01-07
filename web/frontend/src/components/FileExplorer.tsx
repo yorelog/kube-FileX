@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import type { FileInfo, VolumeInfo } from '../types';
 import { api } from '../api';
+import { useToast } from './ToastContext';
+import ConfirmDialog from './ConfirmDialog';
 
 interface FileExplorerProps {
   namespace: string;
@@ -15,12 +17,14 @@ export default function FileExplorer({
   containerName,
   volumes,
 }: FileExplorerProps) {
+  const { showToast } = useToast();
   const [currentPath, setCurrentPath] = useState('/');
   const [files, setFiles] = useState<FileInfo[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [selectedFile, setSelectedFile] = useState<FileInfo | null>(null);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<FileInfo | null>(null);
 
   useEffect(() => {
     loadFiles(currentPath);
@@ -73,8 +77,9 @@ export default function FileExplorer({
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+      showToast('File downloaded successfully', 'success');
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Download failed');
+      showToast(err instanceof Error ? err.message : 'Download failed', 'error');
     }
   };
 
@@ -90,25 +95,29 @@ export default function FileExplorer({
         uploadPath,
         uploadFile
       );
-      alert('File uploaded successfully');
+      showToast('File uploaded successfully', 'success');
       setUploadFile(null);
       loadFiles(currentPath);
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Upload failed');
+      showToast(err instanceof Error ? err.message : 'Upload failed', 'error');
     }
   };
 
   const handleDelete = async (file: FileInfo) => {
-    if (!confirm(`Are you sure you want to delete ${file.name}?`)) {
-      return;
-    }
+    setDeleteConfirm(file);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteConfirm) return;
 
     try {
-      await api.deleteFile(namespace, podName, containerName, file.path);
-      alert('File deleted successfully');
+      await api.deleteFile(namespace, podName, containerName, deleteConfirm.path);
+      showToast('File deleted successfully', 'success');
       loadFiles(currentPath);
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Delete failed');
+      showToast(err instanceof Error ? err.message : 'Delete failed', 'error');
+    } finally {
+      setDeleteConfirm(null);
     }
   };
 
@@ -292,6 +301,17 @@ export default function FileExplorer({
           </div>
         </div>
       )}
+
+      {/* Confirm Delete Dialog */}
+      <ConfirmDialog
+        isOpen={deleteConfirm !== null}
+        title="Delete File"
+        message={`Are you sure you want to delete "${deleteConfirm?.name}"? This action cannot be undone.`}
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteConfirm(null)}
+        confirmText="Delete"
+        cancelText="Cancel"
+      />
     </div>
   );
 }
